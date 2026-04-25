@@ -1,0 +1,29 @@
+# Virtual Environments
+venv/
+venv310/
+env/
+.env
+
+# PyTorch Model Weights
+*.pth
+*.pt
+weights/best_model.pth
+best_model.pth
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Datasets and Images
+*.zip
+*.csv
+dataset/
+samples/
+
+# OS and IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
