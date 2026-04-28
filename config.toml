@@ -1,9 +1,11 @@
 [theme]
-base = "dark"
-primaryColor = "#0D7377"
-backgroundColor = "#090E1A"
-secondaryBackgroundColor = "#0F1623"
-textColor = "#F1F5F9"
+# Neutral light defaults — appearance is driven by `assets/style.css` + in-app theme toggle.
+# Keeping base "light" avoids Streamlit's dark shell overriding CSS variable injection.
+base = "light"
+primaryColor = "#0D9488"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F8FAFC"
+textColor = "#0F172A"
 font = "sans serif"
 
 [server]

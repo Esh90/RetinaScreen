@@ -1,19 +1,14 @@
-/* ═══════════════════════════════════════════════════════════════════
-   RetinaScreen — Clinical Precision Interface
-   Typography : IBM Plex Sans (body) + IBM Plex Mono (data)
-   Theme      : Dual-mode — Surgical Light / Obsidian Dark
-   Aesthetic  : Medical instrument panel × data journal
-   ═══════════════════════════════════════════════════════════════════ */
+/* RetinaScreen — enterprise clinical UI (Inter, light/dark) */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 /* ── CSS Custom Properties — Light (default) ────────────────────── */
 :root {
-  /* Surface */
-  --bg-canvas:      #F8FAFC;
+  /* Surface — clinical white */
+  --bg-canvas:      #FFFFFF;
   --bg-surface:     #FFFFFF;
-  --bg-sunken:      #F1F5F9;
-  --bg-overlay:     #E8EFF8;
+  --bg-sunken:      #F8FAFC;
+  --bg-overlay:     #F1F5F9;
 
   /* Borders */
   --border-subtle:  #E2E8F0;
@@ -48,8 +43,8 @@
   --urgency-urgent:   #DC2626;
 
   /* Typography */
-  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', 'SF Mono', 'Cascadia Code', monospace;
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
 
   /* Geometry */
   --radius-xs:  4px;
@@ -68,28 +63,28 @@
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Dark Mode Override ──────────────────────────────────────────── */
+/* ── Dark palette override (class / Streamlit) ───────────────────── */
 [data-theme="dark"],
 .dark-mode {
-  --bg-canvas:      #090E1A;
-  --bg-surface:     #0F1623;
-  --bg-sunken:      #0B1120;
-  --bg-overlay:     #141E30;
+  --bg-canvas:      #0B0F19;
+  --bg-surface:     #121824;
+  --bg-sunken:      #0E141F;
+  --bg-overlay:     #161D2E;
 
-  --border-subtle:  #1A2540;
-  --border-default: #233153;
-  --border-strong:  #2D4070;
+  --border-subtle:  #1E293B;
+  --border-default: #334155;
+  --border-strong:  #475569;
 
-  --text-primary:   #F1F5F9;
+  --text-primary:   #E2E8F0;
   --text-secondary: #94A3B8;
-  --text-muted:     #475569;
+  --text-muted:     #64748B;
   --text-inverse:   #0F172A;
 
-  --teal:           #14A085;
-  --teal-light:     #1BC5A8;
-  --teal-dim:       #0D7377;
-  --teal-ghost:     rgba(20, 160, 133, 0.09);
-  --teal-ghost-md:  rgba(20, 160, 133, 0.16);
+  --teal:           #14B8A6;
+  --teal-light:     #2DD4BF;
+  --teal-dim:       #0F766E;
+  --teal-ghost:     rgba(20, 184, 166, 0.09);
+  --teal-ghost-md:  rgba(20, 184, 166, 0.16);
 
   --shadow-xs:  0 1px 2px rgba(0,0,0,0.4);
   --shadow-sm:  0 1px 4px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3);
@@ -99,20 +94,20 @@
 
 /* ── Streamlit dark auto-detect ─────────────────────────────────── */
 [data-testid="stAppViewContainer"][class*="dark"] {
-  --bg-canvas:      #090E1A;
-  --bg-surface:     #0F1623;
-  --bg-sunken:      #0B1120;
-  --bg-overlay:     #141E30;
-  --border-subtle:  #1A2540;
-  --border-default: #233153;
-  --border-strong:  #2D4070;
-  --text-primary:   #F1F5F9;
+  --bg-canvas:      #0B0F19;
+  --bg-surface:     #121824;
+  --bg-sunken:      #0E141F;
+  --bg-overlay:     #161D2E;
+  --border-subtle:  #1E293B;
+  --border-default: #334155;
+  --border-strong:  #475569;
+  --text-primary:   #E2E8F0;
   --text-secondary: #94A3B8;
-  --text-muted:     #475569;
-  --teal:           #14A085;
-  --teal-light:     #1BC5A8;
-  --teal-ghost:     rgba(20, 160, 133, 0.09);
-  --teal-ghost-md:  rgba(20, 160, 133, 0.16);
+  --text-muted:     #64748B;
+  --teal:           #14B8A6;
+  --teal-light:     #2DD4BF;
+  --teal-ghost:     rgba(20, 184, 166, 0.09);
+  --teal-ghost-md:  rgba(20, 184, 166, 0.16);
 }
 
 /* ── Reset ──────────────────────────────────────────────────────── */
@@ -207,6 +202,18 @@ code, pre {
   padding: 1.5rem 0 1.75rem;
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 2.25rem;
+  position: relative;
+}
+.rs-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--teal) 0%, var(--teal-light) 40%, #60A5FA 100%);
+  opacity: 0.9;
 }
 
 .rs-wordmark {
@@ -219,7 +226,7 @@ code, pre {
   width: 42px;
   height: 42px;
   border-radius: var(--radius-sm);
-  background: var(--teal);
+  background: linear-gradient(145deg, var(--teal) 0%, var(--teal-dim) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -579,22 +586,42 @@ code, pre {
   border-top: 1px solid var(--border-subtle);
 }
 
-/* ── Image full-screen / lightbox fix ───────────────────────────── */
+/* ── Image fullscreen / lightbox ───────────────────────────────── */
 [data-testid="stImageFullScreen"],
+[data-testid="stImageFullScreenFrame"],
+div[data-testid="stLightboxOverlay"] {
+  background: rgba(11, 15, 25, 0.92) !important;
+  backdrop-filter: blur(14px) saturate(1.1) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+[data-testid="stImageFullScreen"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: min(4vh, 2rem) min(3vw, 1.5rem) !important;
+  box-sizing: border-box !important;
+}
+
 [data-testid="stImageFullScreen"] > div,
-[data-testid="stLightboxOverlay"] {
-  background: rgba(0, 0, 0, 0.88) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+[data-testid="stLightboxOverlay"] > div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
 [data-testid="stImageFullScreen"] img,
-[data-testid="stLightboxOverlay"] img {
-  max-width: min(90vw, 900px) !important;
-  max-height: 85vh !important;
+[data-testid="stLightboxOverlay"] img,
+[data-testid="stImageFullScreenFrame"] img {
+  max-width: min(92vw, 980px) !important;
+  max-height: 88vh !important;
+  width: auto !important;
+  height: auto !important;
   object-fit: contain !important;
   border-radius: var(--radius-md) !important;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.7) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55) !important;
 }
 
 /* ── Streamlit native image ─────────────────────────────────────── */
@@ -609,6 +636,10 @@ code, pre {
   border-collapse: collapse;
   font-family: var(--font-mono);
   font-size: 0.78rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
 }
 
 .rs-data-table th {
@@ -616,17 +647,22 @@ code, pre {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
-  font-weight: 400;
-  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+  padding: 0.65rem 0.9rem;
   border-bottom: 1px solid var(--border-subtle);
   text-align: left;
+  background: var(--bg-sunken);
 }
 
 .rs-data-table td {
-  padding: 0.55rem 0.85rem;
+  padding: 0.6rem 0.9rem;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-primary);
   vertical-align: middle;
+}
+
+.rs-data-table tbody tr:nth-child(even) {
+  background: rgba(13, 148, 136, 0.045);
 }
 
 .rs-data-table tr:last-child td {
@@ -949,6 +985,152 @@ code, pre {
 
 .stMarkdown tr:last-child td {
   border-bottom: none !important;
+}
+
+/* ── Sidebar microcopy (app.py) ─────────────────────────────────── */
+.rs-sidebar-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.rs-sys-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.rs-sys-meta span {
+  color: var(--teal);
+  font-weight: 500;
+}
+
+.rs-disclaimer {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── Empty upload state ─────────────────────────────────────────── */
+.rs-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  color: var(--text-muted);
+  text-align: center;
+  gap: 0.85rem;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  background: var(--bg-surface);
+}
+
+.rs-empty-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.rs-empty-copy {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 420px;
+  line-height: 1.65;
+}
+
+/* ── Referral toolbar & enterprise cards ───────────────────────── */
+.rs-ref-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.rs-hospital-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 0.65rem;
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.rs-hospital-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+}
+
+.rs-hospital-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.rs-hospital-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.rs-hospital-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.rs-hospital-chip {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  background: var(--bg-sunken);
+}
+
+.rs-hospital-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.rs-hospital-phone {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--teal);
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 640px) {
+  .rs-hospital-card {
+    flex-direction: column;
+  }
+  .rs-spec-link {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ── Responsive col stacking safety ─────────────────────────────── */
