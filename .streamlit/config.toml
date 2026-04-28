@@ -1,5 +1,4 @@
 [theme]
-# Native Streamlit palette aligned with clinical dark chrome (also toggleable in-app).
 base = "dark"
 primaryColor = "#14B8A6"
 backgroundColor = "#0B0F19"

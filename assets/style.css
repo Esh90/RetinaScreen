@@ -115,9 +115,10 @@
 
 /* ── App Shell ──────────────────────────────────────────────────── */
 .stApp {
+  background: linear-gradient(165deg, #ECFEFF 0%, #F8FAFC 38%, #FFFFFF 72%, #F0FDFA 100%) !important;
   background-color: var(--bg-canvas) !important;
   font-family: var(--font-sans) !important;
-  transition: background-color var(--transition) !important;
+  transition: background-color var(--transition), background var(--transition) !important;
 }
 
 .main .block-container {
@@ -152,14 +153,14 @@ header,
 [data-testid="stSidebar"] span:not([class]) {
   color: var(--text-secondary) !important;
   font-family: var(--font-sans) !important;
-  font-size: 0.82rem !important;
+  font-size: 0.95rem !important;
 }
 
 [data-testid="stSidebar"] h3,
 [data-testid="stSidebar"] h4 {
   color: var(--text-primary) !important;
   font-family: var(--font-sans) !important;
-  font-size: 0.7rem !important;
+  font-size: 0.78rem !important;
   font-weight: 600 !important;
   letter-spacing: 0.08em !important;
   text-transform: uppercase !important;
@@ -223,8 +224,8 @@ code, pre {
 }
 
 .rs-wordmark-icon {
-  width: 42px;
-  height: 42px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-sm);
   background: linear-gradient(145deg, var(--teal) 0%, var(--teal-dim) 100%);
   display: flex;
@@ -234,30 +235,33 @@ code, pre {
 }
 
 .rs-wordmark-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   fill: none;
   stroke: white;
   stroke-width: 1.8;
 }
 
-.rs-wordmark-text h1 {
-  font-size: 1.35rem !important;
-  font-weight: 700 !important;
-  color: var(--text-primary) !important;
-  letter-spacing: -0.025em !important;
+.rs-wordmark-text h1.rs-title-hero,
+.rs-title-hero {
+  font-size: clamp(2.35rem, 4.8vw, 3.85rem) !important;
+  font-weight: 800 !important;
+  color: var(--text-primary);
+  letter-spacing: -0.035em !important;
   margin: 0 !important;
-  line-height: 1.2 !important;
+  line-height: 1.05 !important;
 }
 
-.rs-wordmark-text span {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  letter-spacing: 0.12em;
+.rs-wordmark-text span.rs-title-sub,
+.rs-title-sub {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   display: block;
-  margin-top: 2px;
+  margin-top: 0.35rem;
 }
 
 .rs-header-meta {
@@ -272,13 +276,13 @@ code, pre {
   align-items: center;
   gap: 0.35rem;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--teal);
-  background: var(--teal-ghost);
-  border: 1px solid rgba(13,115,119,0.2);
-  padding: 0.25rem 0.65rem;
+  color: var(--teal-dim);
+  background: linear-gradient(135deg, rgba(204, 251, 241, 0.85) 0%, rgba(167, 243, 208, 0.35) 100%);
+  border: 1px solid rgba(13, 148, 136, 0.28);
+  padding: 0.35rem 0.75rem;
   border-radius: 100px;
 }
 
@@ -291,12 +295,19 @@ code, pre {
 
 /* ── Upload zone ────────────────────────────────────────────────── */
 .rs-upload-wrapper {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(160deg, #FFFFFF 0%, #F0FDFA 100%);
+  border: 1px solid rgba(13, 148, 136, 0.22);
   border-radius: var(--radius-lg);
   padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), 0 0 40px rgba(20, 184, 166, 0.06);
   margin-bottom: 1.5rem;
+  margin-top: 0.35rem;
+  margin-right: 1.25rem;
+}
+
+div[data-testid="stHorizontalBlock"]:has([data-testid="stFileUploader"]) {
+  margin-top: 1.75rem;
+  gap: 2.5rem !important;
 }
 
 .rs-upload-label {
@@ -544,13 +555,25 @@ code, pre {
 .rs-alert-urgent  .rs-alert-marker { background: #DC2626; color: white; }
 .rs-alert-success .rs-alert-marker { background: #16A34A; color: white; }
 
-/* ── GradCAM panel ──────────────────────────────────────────────── */
-.rs-cam-panel {
+/* ── GradCAM column (header + st.image + caption as separate Streamlit blocks) ── */
+[data-testid="column"]:has(.rs-cam-header) {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-xs);
+}
+
+[data-testid="column"]:has(.rs-cam-header) > div {
+  gap: 0;
+}
+
+[data-testid="column"]:has(.rs-cam-header) [data-testid="element-container"] {
+  margin-bottom: 0;
+}
+
+[data-testid="column"]:has(.rs-cam-header) [data-testid="stImage"] {
+  padding: 0.45rem 0.65rem 0;
 }
 
 .rs-cam-header {
@@ -560,6 +583,7 @@ code, pre {
   align-items: center;
   gap: 0.6rem;
   background: var(--bg-sunken);
+  margin: 0;
 }
 
 .rs-cam-header span {
@@ -570,10 +594,6 @@ code, pre {
   color: var(--text-secondary);
 }
 
-.rs-cam-body {
-  padding: 0.75rem;
-}
-
 .rs-cam-caption {
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -581,8 +601,8 @@ code, pre {
   text-transform: uppercase;
   color: var(--text-muted);
   text-align: center;
-  margin-top: 0.5rem;
-  padding: 0.4rem 0 0;
+  margin: 0;
+  padding: 0.5rem 0.65rem 0.65rem;
   border-top: 1px solid var(--border-subtle);
 }
 
@@ -661,7 +681,7 @@ div[data-testid="stLightboxOverlay"] {
   vertical-align: middle;
 }
 
-.rs-data-table tbody tr:nth-child(even) {
+.rs-data-table:not(.rs-grade-ref-table) tbody tr:nth-child(even) {
   background: rgba(13, 148, 136, 0.045);
 }
 
@@ -685,6 +705,87 @@ div[data-testid="stLightboxOverlay"] {
   color: #DC2626;
   font-weight: 500;
   text-align: right;
+}
+
+/* ETDRS reference ladder — teal header + severity rows */
+.rs-grade-ref-caption {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+.rs-grade-ref-table thead tr {
+  background: linear-gradient(90deg, #0f766e 0%, #0d9488 45%, #115e59 100%);
+}
+
+.rs-grade-ref-table thead th {
+  font-family: var(--font-sans) !important;
+  background: transparent !important;
+  color: #f8fafc !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  border-bottom: none !important;
+  padding: 0.85rem 1rem !important;
+}
+
+.rs-grade-ref-table tbody tr {
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.rs-grade-ref-table tbody tr:hover {
+  transform: translateX(3px);
+  box-shadow: -6px 0 14px rgba(15, 23, 42, 0.07);
+}
+
+.rs-grade-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.85rem;
+  height: 1.85rem;
+  padding: 0 0.35rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #f8fafc;
+}
+
+.rs-grade-ref-table tbody tr[data-grade="0"] {
+  background: linear-gradient(90deg, rgba(22, 163, 74, 0.22) 0%, rgba(34, 197, 94, 0.12) 100%);
+}
+.rs-grade-ref-table tbody tr[data-grade="1"] {
+  background: linear-gradient(90deg, rgba(101, 163, 13, 0.2) 0%, rgba(132, 204, 22, 0.1) 100%);
+}
+.rs-grade-ref-table tbody tr[data-grade="2"] {
+  background: linear-gradient(90deg, rgba(202, 138, 4, 0.22) 0%, rgba(234, 179, 8, 0.12) 100%);
+}
+.rs-grade-ref-table tbody tr[data-grade="3"] {
+  background: linear-gradient(90deg, rgba(234, 88, 12, 0.2) 0%, rgba(251, 146, 60, 0.12) 100%);
+}
+.rs-grade-ref-table tbody tr[data-grade="4"] {
+  background: linear-gradient(90deg, rgba(185, 28, 28, 0.28) 0%, rgba(220, 38, 38, 0.15) 100%);
+}
+
+/* All severity rows: white copy on tinted bands (theme inject also sets td; keep row rule winning) */
+.rs-grade-ref-table tbody tr[data-grade="0"] td,
+.rs-grade-ref-table tbody tr[data-grade="1"] td,
+.rs-grade-ref-table tbody tr[data-grade="2"] td,
+.rs-grade-ref-table tbody tr[data-grade="3"] td,
+.rs-grade-ref-table tbody tr[data-grade="4"] td {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.rs-grade-ref-table tbody tr[data-grade="4"] td {
+  font-weight: 700 !important;
 }
 
 /* ── Specialist card ────────────────────────────────────────────── */
@@ -783,7 +884,94 @@ div[data-testid="stLightboxOverlay"] {
 }
 
 .stTabs [data-baseweb="tab-panel"] {
-  padding: 1.5rem 0 0 !important;
+  padding: 0.5rem 0 0 !important;
+}
+
+/* Main tab shell — solid panel behind BaseWeb (works with custom theme inject, not only [class*="dark"]) */
+section.main [data-testid="stTabs"],
+section.main [data-testid="stTabsNavContainer"],
+section.main [data-testid="stTabs-nav-container"],
+section.main [data-testid="stTabs"] > div,
+section.main [data-testid="stTabs"] > div > div,
+section.main .stTabs,
+section.main .stTabs > div,
+section.main div[data-baseweb="tabs"],
+section.main div[data-baseweb="tabs"] > div,
+section.main [data-baseweb="tab-list"],
+section.main [data-baseweb="tab-panel"],
+section.main [data-baseweb="tab-panel"] > div {
+  background-color: #0b0f19 !important;
+  background-image: none !important;
+  color: #f1f5f9 !important;
+}
+
+section.main [data-testid="element-container"]:has([data-testid="stTabs"]),
+section.main [data-testid="element-container"]:has([data-baseweb="tabs"]),
+section.main [data-testid="stVerticalBlock"]:has([data-testid="stTabs"]) {
+  background-color: #0b0f19 !important;
+}
+
+/* Tab strip row — Streamlit 1.4x+ wrappers often keep default light shell */
+section.main [data-testid="stTabsNavContainer"],
+section.main [data-testid="stTabsNavContainer"] > *,
+section.main [data-testid="stTabs"] > div:first-child,
+section.main [data-testid="stTabs"] [role="tablist"],
+section.main [data-testid="stTabs"] button[role="tab"] {
+  background-color: #0e141f !important;
+  background-image: none !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+section.main [data-testid="stTabs"] button[role="tab"][aria-selected="false"] {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+section.main [data-testid="stTabs"] [data-baseweb="tab"] {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+section.main [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"] {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.28), rgba(45, 212, 191, 0.12)) !important;
+  border: 1px solid rgba(45, 212, 191, 0.35) !important;
+  color: #ecfeff !important;
+  -webkit-text-fill-color: #ecfeff !important;
+}
+
+section.main [data-baseweb="tab-panel"] p,
+section.main [data-baseweb="tab-panel"] li,
+section.main [data-baseweb="tab-panel"] td,
+section.main [data-baseweb="tab-panel"] th,
+section.main [data-baseweb="tab-panel"] .stMarkdown,
+section.main [data-baseweb="tab-panel"] .stCaption {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+section.main [data-baseweb="tab-panel"] [data-testid="column"]:has(.rs-cam-header) {
+  background-color: #0e141f !important;
+  border: 1px solid #334155 !important;
+  border-radius: var(--radius-md);
+}
+
+section.main [data-baseweb="tab-panel"] .rs-cam-header {
+  background-color: #121824 !important;
+}
+
+section.main [data-baseweb="tab-panel"] .rs-cam-header span,
+section.main [data-baseweb="tab-panel"] .rs-cam-caption {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+/* Plotly in tabs keeps its own light canvas; do not force white text inside chart root */
+section.main [data-baseweb="tab-panel"] [data-testid="stPlotlyChart"],
+section.main [data-baseweb="tab-panel"] [data-testid="stPlotlyChart"] * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
 }
 
 /* ── Sliders ────────────────────────────────────────────────────── */
@@ -811,6 +999,23 @@ div[data-testid="stLightboxOverlay"] {
   transition: border-color var(--transition), box-shadow var(--transition) !important;
 }
 
+/* Tab content: force dark field (fixes referral city search light-on-light) */
+section.main [data-baseweb="tab-panel"] .stTextInput > div > div > input {
+  background-color: #0e141f !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+section.main [data-baseweb="tab-panel"] .stTextInput > div > div > input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+section.main [data-baseweb="tab-panel"] [data-testid="stWidgetLabel"] p {
+  color: #cbd5e1 !important;
+}
+
 .stTextInput > div > div > input:focus {
   border-color: var(--teal) !important;
   box-shadow: 0 0 0 3px var(--teal-ghost) !important;
@@ -835,6 +1040,27 @@ div[data-testid="stLightboxOverlay"] {
 .stButton > button:hover {
   background: var(--teal-light) !important;
   box-shadow: 0 4px 16px rgba(13,115,119,0.3) !important;
+}
+
+/* Clinical PDF export — maroon CTA (anchors + BaseWeb buttons; beat theme text-fill) */
+[data-testid="stDownloadButton"] a,
+[data-testid="stDownloadButton"] button,
+[data-testid="stDownloadButton"] [data-testid="baseButton-secondary"] {
+  background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 45%, #b91c1c 100%) !important;
+  background-color: #991b1b !important;
+  color: #fff7f7 !important;
+  -webkit-text-fill-color: #fff7f7 !important;
+  border: 1px solid rgba(254, 202, 202, 0.45) !important;
+}
+
+[data-testid="stDownloadButton"] a:hover,
+[data-testid="stDownloadButton"] button:hover,
+[data-testid="stDownloadButton"] [data-testid="baseButton-secondary"]:hover {
+  background: linear-gradient(145deg, #991b1b 0%, #b91c1c 50%, #dc2626 100%) !important;
+  background-color: #b91c1c !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(185, 28, 28, 0.4) !important;
 }
 
 /* ── Expanders ──────────────────────────────────────────────────── */
@@ -1049,7 +1275,7 @@ div[data-testid="stLightboxOverlay"] {
   line-height: 1.65;
 }
 
-/* ── Referral toolbar & enterprise cards ───────────────────────── */
+/* ── Referral toolbar & facility cards (explicit dark; avoids var() / widget theme clashes) ─ */
 .rs-ref-toolbar {
   display: flex;
   align-items: center;
@@ -1064,18 +1290,19 @@ div[data-testid="stLightboxOverlay"] {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  background: #0b0f19 !important;
+  background-color: #0b0f19 !important;
+  border: 1px solid #334155 !important;
   border-radius: var(--radius-md);
   padding: 1.1rem 1.25rem;
   margin-bottom: 0.65rem;
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
 .rs-hospital-card:hover {
-  border-color: var(--border-default);
-  box-shadow: var(--shadow-md);
+  border-color: #475569 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .rs-hospital-card-main {
@@ -1094,7 +1321,8 @@ div[data-testid="stLightboxOverlay"] {
 .rs-hospital-name {
   font-size: 0.92rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
 }
 
 .rs-hospital-chip {
@@ -1104,23 +1332,33 @@ div[data-testid="stLightboxOverlay"] {
   text-transform: uppercase;
   padding: 0.15rem 0.5rem;
   border-radius: 100px;
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
-  background: var(--bg-sunken);
+  border: 1px solid #475569 !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  background: #1e293b !important;
 }
 
 .rs-hospital-meta {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: var(--text-secondary);
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
   line-height: 1.55;
 }
 
 .rs-hospital-phone {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: var(--teal);
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
   margin-top: 0.35rem;
+}
+
+.rs-hospital-card .rs-spec-link {
+  color: #5eead4 !important;
+  -webkit-text-fill-color: #5eead4 !important;
+  border-color: #2dd4bf !important;
+  background: rgba(20, 184, 166, 0.12) !important;
 }
 
 @media (max-width: 640px) {

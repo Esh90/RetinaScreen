@@ -23,6 +23,8 @@ import plotly.graph_objects as go
 import streamlit as st
 from PIL import Image
 
+from theme_overrides import RS_THEME_DARK, RS_THEME_LIGHT
+
 st.set_page_config(
     page_title="RetinaScreen",
     page_icon="assets/favicon.ico" if os.path.exists("assets/favicon.ico") else None,
@@ -55,92 +57,8 @@ def _st_image(image, *, caption: str | None = None) -> None:
 
 
 def _apply_theme_overrides(dark: bool) -> None:
-    if dark:
-        st.markdown(
-            """
-            <style>
-            :root {
-              --bg-canvas:      #0B0F19;
-              --bg-surface:     #121824;
-              --bg-sunken:      #0E141F;
-              --bg-overlay:     #161D2E;
-              --border-subtle:  #1E293B;
-              --border-default: #334155;
-              --border-strong:  #475569;
-              --text-primary:   #E2E8F0;
-              --text-secondary: #94A3B8;
-              --text-muted:     #64748B;
-              --text-inverse:   #0F172A;
-              --teal:           #14B8A6;
-              --teal-light:     #2DD4BF;
-              --teal-dim:       #0F766E;
-              --teal-ghost:     rgba(20, 184, 166, 0.09);
-              --teal-ghost-md:  rgba(20, 184, 166, 0.16);
-              --shadow-xs:  0 1px 2px rgba(0,0,0,0.45);
-              --shadow-sm:  0 1px 4px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.35);
-              --shadow-md:  0 4px 16px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
-              --shadow-lg:  0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.4);
-              --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-              --font-mono: ui-monospace, "SF Mono", "Cascadia Code", monospace;
-            }
-            html, body, .stApp, [data-testid="stAppViewContainer"],
-            [data-testid="stAppViewBlockContainer"], .main {
-              background-color: var(--bg-canvas) !important;
-              color: var(--text-primary) !important;
-            }
-            [data-testid="stSidebar"] {
-              background-color: var(--bg-surface) !important;
-              border-right: 1px solid var(--border-subtle) !important;
-            }
-            [data-testid="stHeader"] { background: transparent !important; }
-            section.main > div { max-width: none !important; }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown(
-            """
-            <style>
-            :root {
-              --bg-canvas:      #FFFFFF;
-              --bg-surface:     #FFFFFF;
-              --bg-sunken:      #F8FAFC;
-              --bg-overlay:     #F1F5F9;
-              --border-subtle:  #E2E8F0;
-              --border-default: #CBD5E1;
-              --border-strong:  #94A3B8;
-              --text-primary:   #0F172A;
-              --text-secondary: #475569;
-              --text-muted:     #64748B;
-              --text-inverse:   #F8FAFC;
-              --teal:           #0D9488;
-              --teal-light:     #14B8A6;
-              --teal-dim:       #0F766E;
-              --teal-ghost:     rgba(13, 148, 136, 0.08);
-              --teal-ghost-md:  rgba(13, 148, 136, 0.14);
-              --shadow-xs:  0 1px 2px rgba(15,23,42,0.05);
-              --shadow-sm:  0 1px 4px rgba(15,23,42,0.07);
-              --shadow-md:  0 4px 12px rgba(15,23,42,0.08);
-              --shadow-lg:  0 12px 32px rgba(15,23,42,0.10);
-              --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-              --font-mono: ui-monospace, "SF Mono", "Cascadia Code", monospace;
-            }
-            html, body, .stApp, [data-testid="stAppViewContainer"],
-            [data-testid="stAppViewBlockContainer"], .main {
-              background-color: var(--bg-canvas) !important;
-              color: var(--text-primary) !important;
-            }
-            [data-testid="stSidebar"] {
-              background-color: #FAFBFC !important;
-              border-right: 1px solid var(--border-subtle) !important;
-            }
-            [data-testid="stHeader"] { background: transparent !important; }
-            section.main > div { max-width: none !important; }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
+    """Inject comprehensive theme skin (see theme_overrides.py). Toggle uses key `rs_dark_mode`."""
+    st.markdown(RS_THEME_DARK if dark else RS_THEME_LIGHT, unsafe_allow_html=True)
 
 
 try:
@@ -182,16 +100,45 @@ URGENCY_INFO = {
 }
 
 
+def _grade_quick_ref_html() -> str:
+    """ETDRS quick reference with severity-colored rows (see .rs-grade-ref-table in style.css)."""
+    short = {0: "No DR", 1: "Mild", 2: "Moderate", 3: "Severe", 4: "Proliferative"}
+    actions = {
+        0: "Annual screen",
+        1: "6-month review",
+        2: "Refer < 4 wk",
+        3: "Refer < 1 wk",
+        4: "Emergency",
+    }
+    rows = []
+    for g in range(5):
+        color = GRADE_INFO[g][1]
+        rows.append(
+            f'<tr data-grade="{g}">'
+            f'<td><span class="rs-grade-pill" style="background:linear-gradient(145deg,{color},#0f172a);">{g}</span></td>'
+            f"<td>{short[g]}</td>"
+            f"<td>{actions[g]}</td>"
+            f"</tr>"
+        )
+    return (
+        '<p class="rs-grade-ref-caption">ETDRS severity ladder (quick reference)</p>'
+        '<table class="rs-data-table rs-grade-ref-table" style="margin-top:0">'
+        "<thead><tr><th>Grade</th><th>Class</th><th>Action</th></tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table>"
+    )
+
+
 def _ben_graham_visual(img_rgb: np.ndarray) -> np.ndarray:
     """Ben Graham preprocessing for side-by-side comparison (same op as model path, visualization only)."""
     return cv2.addWeighted(img_rgb, 4, cv2.GaussianBlur(img_rgb, (0, 0), 30), -4, 128)
 
 
-def _plotly_clinical_theme(dark: bool) -> dict:
-    paper = "#0B0F19" if dark else "#FFFFFF"
-    fg = "#E2E8F0" if dark else "#0F172A"
-    muted = "#64748B" if dark else "#64748B"
-    grid = "rgba(148,163,184,0.18)" if dark else "rgba(15,23,42,0.08)"
+def _plotly_clinical_theme() -> dict:
+    """Light plot canvas for readability even when the app shell is dark."""
+    paper = "#FFFFFF"
+    fg = "#0F172A"
+    muted = "#475569"
+    grid = "rgba(15,23,42,0.09)"
     return {
         "paper_bgcolor": paper,
         "plot_bgcolor": paper,
@@ -245,7 +192,7 @@ def _clinical_radar_values(result: dict, grade: int) -> tuple[list[float], list[
 
 
 def _fig_grade_distribution(dark: bool, grade_probs: list, pred_grade: int, mc_passes: int) -> go.Figure:
-    t = _plotly_clinical_theme(dark)
+    t = _plotly_clinical_theme()
     x_labels = [f"G{g}" for g in range(5)]
     accent = "#14B8A6" if dark else "#0D9488"
     fig = go.Figure(
@@ -300,7 +247,7 @@ def _fig_grade_distribution(dark: bool, grade_probs: list, pred_grade: int, mc_p
 
 
 def _fig_mc_histogram(dark: bool, all_grades: list, mc_passes: int, pred_grade: int) -> go.Figure:
-    t = _plotly_clinical_theme(dark)
+    t = _plotly_clinical_theme()
     accent = GRADE_CHART_COLORS[pred_grade]
     fig = go.Figure(
         go.Histogram(
@@ -337,7 +284,7 @@ def _fig_mc_histogram(dark: bool, all_grades: list, mc_passes: int, pred_grade: 
 
 
 def _fig_cas_gauge(dark: bool, cas_val: float, cas_color: str) -> go.Figure:
-    t = _plotly_clinical_theme(dark)
+    t = _plotly_clinical_theme()
     fg = t["_fg"]
     fig = go.Figure(
         go.Indicator(
@@ -386,11 +333,11 @@ def _fig_cas_gauge(dark: bool, cas_val: float, cas_color: str) -> go.Figure:
 
 def _fig_clinical_radar(dark: bool, values: list[float], categories: list[str]) -> go.Figure:
     """Radar with explicit 120° axes so Plotly always draws a triangle (not a stray chord)."""
-    t = _plotly_clinical_theme(dark)
+    t = _plotly_clinical_theme()
     fg = t["_fg"]
     muted = t["_muted"]
-    grid_major = "rgba(255,255,255,0.28)" if dark else "rgba(15,23,42,0.14)"
-    grid_minor = "rgba(255,255,255,0.14)" if dark else "rgba(15,23,42,0.07)"
+    grid_major = "rgba(15,23,42,0.14)"
+    grid_minor = "rgba(15,23,42,0.07)"
     r = list(values) + [values[0]]
     degs = [90, 210, 330, 90]
     vtx_colors = ["#34D399", "#FBBF24", "#FB7185", "#34D399"]
@@ -449,8 +396,8 @@ def _fig_clinical_radar(dark: bool, values: list[float], categories: list[str]) 
     return fig
 
 
-if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = False
+if "rs_dark_mode" not in st.session_state:
+    st.session_state.rs_dark_mode = True
 if "result" not in st.session_state:
     st.session_state.result = None
 if "cam_maps" not in st.session_state:
@@ -472,12 +419,8 @@ with st.sidebar:
         '<p class="rs-sidebar-kicker">Display</p>',
         unsafe_allow_html=True,
     )
-    # Single source of truth (no separate widget key) — avoids one-frame desync with CSS injection
-    st.session_state.dark_mode = st.toggle(
-        "Dark mode",
-        value=bool(st.session_state.dark_mode),
-    )
-    _apply_theme_overrides(bool(st.session_state.dark_mode))
+    st.toggle("Dark mode", key="rs_dark_mode")
+    _apply_theme_overrides(bool(st.session_state.rs_dark_mode))
 
     st.markdown('<div class="rs-divider" style="margin:1rem 0"></div>', unsafe_allow_html=True)
 
@@ -521,8 +464,8 @@ st.markdown(
           </svg>
         </div>
         <div class="rs-wordmark-text">
-          <h1>RetinaScreen</h1>
-          <span>Diabetic retinopathy grading system</span>
+          <h1 class="rs-title-hero">RetinaScreen</h1>
+          <span class="rs-title-sub">Diabetic retinopathy grading system</span>
         </div>
       </div>
       <div class="rs-header-meta">
@@ -559,23 +502,7 @@ with col_upload:
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col_ref:
-    st.markdown(
-        """
-        <table class="rs-data-table" style="margin-top:0.15rem">
-          <thead>
-            <tr><th>Grade</th><th>Class</th><th>Action</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>0</td><td>No DR</td><td>Annual screen</td></tr>
-            <tr><td>1</td><td>Mild</td><td>6-month review</td></tr>
-            <tr><td>2</td><td>Moderate</td><td>Refer &lt; 4 wk</td></tr>
-            <tr><td>3</td><td>Severe</td><td>Refer &lt; 1 wk</td></tr>
-            <tr><td>4</td><td>Proliferative</td><td>Emergency</td></tr>
-          </tbody>
-        </table>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.markdown(_grade_quick_ref_html(), unsafe_allow_html=True)
 
 if uploaded_file is not None:
     fp = f"{uploaded_file.name}:{getattr(uploaded_file, 'size', '')}"
@@ -690,7 +617,7 @@ if uploaded_file is not None:
     st.markdown('<div class="rs-divider"></div>', unsafe_allow_html=True)
     st.markdown('<p class="rs-section-label">Clinical review</p>', unsafe_allow_html=True)
 
-    dark = st.session_state.dark_mode
+    dark = bool(st.session_state.rs_dark_mode)
     review_l, review_r = st.columns([1.2, 1], gap="large")
 
     img_cmp = cv2.resize(img_np, (640, 640), interpolation=cv2.INTER_AREA)
@@ -765,6 +692,7 @@ if uploaded_file is not None:
             pdf_bytes = bytes(pdf_bytes)
         st.download_button(
             label="Download clinical PDF report",
+            key="rs_clinical_pdf",
             data=pdf_bytes,
             file_name=f"RetinaScreen_report_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.pdf",
             mime="application/pdf",
@@ -796,45 +724,42 @@ if uploaded_file is not None:
 
             with c1:
                 st.markdown(
-                    '<div class="rs-cam-panel"><div class="rs-cam-header"><span>Source</span></div><div class="rs-cam-body">',
+                    '<div class="rs-cam-header"><span>Source</span></div>',
                     unsafe_allow_html=True,
                 )
                 _st_image(img_display)
-                st.markdown(
-                    '<p class="rs-cam-caption">Original fundus</p></div></div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown('<p class="rs-cam-caption">Original fundus</p>', unsafe_allow_html=True)
 
             with c2:
                 st.markdown(
-                    '<div class="rs-cam-panel"><div class="rs-cam-header"><span>Mean attention</span></div><div class="rs-cam-body">',
+                    '<div class="rs-cam-header"><span>Mean attention</span></div>',
                     unsafe_allow_html=True,
                 )
                 _st_image(_overlay(m["mean_attention"]))
                 st.markdown(
-                    '<p class="rs-cam-caption">Spatial attention (T=10)</p></div></div>',
+                    '<p class="rs-cam-caption">Spatial attention (T=10)</p>',
                     unsafe_allow_html=True,
                 )
 
             with c3:
                 st.markdown(
-                    '<div class="rs-cam-panel"><div class="rs-cam-header"><span>Attention variance</span></div><div class="rs-cam-body">',
+                    '<div class="rs-cam-header"><span>Attention variance</span></div>',
                     unsafe_allow_html=True,
                 )
                 _st_image(_overlay(m["uncertainty_map"], cmap=cv2.COLORMAP_VIRIDIS))
                 st.markdown(
-                    '<p class="rs-cam-caption">Pass-to-pass fluctuation</p></div></div>',
+                    '<p class="rs-cam-caption">Pass-to-pass fluctuation</p>',
                     unsafe_allow_html=True,
                 )
 
             with c4:
                 st.markdown(
-                    '<div class="rs-cam-panel"><div class="rs-cam-header"><span>Certain attention</span></div><div class="rs-cam-body">',
+                    '<div class="rs-cam-header"><span>Certain attention</span></div>',
                     unsafe_allow_html=True,
                 )
                 _st_image(_overlay(m["certain_attention"]))
                 st.markdown(
-                    '<p class="rs-cam-caption">Variance-downweighted signal</p></div></div>',
+                    '<p class="rs-cam-caption">Variance-downweighted signal</p>',
                     unsafe_allow_html=True,
                 )
 
