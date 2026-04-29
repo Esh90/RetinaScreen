@@ -44,10 +44,16 @@ def load_model(weights_path: str, device: str = 'cpu') -> RetinaScreenModel:
     return model
 
 
-def load_model_from_hub(repo_id: str, filename: str = 'weights/best_model.pth',
-                        device: str = 'cpu') -> RetinaScreenModel:
+def load_model_from_hub(
+    repo_id: str,
+    filename: str = 'weights/best_model.pth',
+    device: str = 'cpu',
+    token: str | None = None,
+) -> RetinaScreenModel:
+    """Download weights from the Hub (cached under ~/.cache/huggingface) then load."""
     from huggingface_hub import hf_hub_download
-    path = hf_hub_download(repo_id=repo_id, filename=filename)
+
+    path = hf_hub_download(repo_id=repo_id, filename=filename, token=token)
     return load_model(path, device=device)
 
 

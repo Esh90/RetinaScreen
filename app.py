@@ -20,10 +20,14 @@ from datetime import datetime
 import cv2
 import numpy as np
 import plotly.graph_objects as go
+import torch
 import streamlit as st
 from PIL import Image
 
 from theme_overrides import RS_THEME_DARK, RS_THEME_LIGHT
+
+# Inference device (Streamlit Community Cloud is CPU-only; local may use CUDA).
+_INFER_DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 
 st.set_page_config(
     page_title="RetinaScreen",
@@ -64,7 +68,7 @@ def _apply_theme_overrides(dark: bool) -> None:
 try:
     from src.clinical_report import build_clinical_pdf_bytes, heatmap_overlay_or_none
     from src.gradcam import compute_um_gradcam, overlay_heatmap as overlay_heatmap_on_image
-    from src.model import load_model, preprocess_image
+    from src.model import load_model, load_model_from_hub, preprocess_image
     from src.referral import find_nearest_ophthalmologists, render_specialist_map
     from src.uncertainty import mc_predict_with_dud
 
@@ -408,9 +412,41 @@ if "upload_fingerprint" not in st.session_state:
     st.session_state.upload_fingerprint = None
 
 
-@st.cache_resource(show_spinner=False)
+def _optional_streamlit_secret(key: str) -> str | None:
+    try:
+        v = st.secrets[key]
+        return str(v).strip() if v is not None else None
+    except Exception:
+        return None
+
+
+@st.cache_resource(show_spinner=True)
 def _get_model():
-    return load_model("weights/best_model.pth")
+    """
+    Load weights from, in order:
+      1) weights/best_model.pth next to app.py (local / self-hosted)
+      2) Hugging Face Hub when HF_REPO is set in Streamlit secrets (.streamlit/secrets.toml or Cloud Secrets)
+    Hub files are cached on the server after first download (subsequent app runs reuse the cache when possible).
+    """
+    root = os.path.dirname(os.path.abspath(__file__))
+    local = os.path.join(root, "weights", "best_model.pth")
+    if os.path.isfile(local):
+        return load_model(local, device=_INFER_DEVICE)
+    repo = _optional_streamlit_secret("HF_REPO")
+    if repo:
+        filename = _optional_streamlit_secret("HF_MODEL_FILE") or "weights/best_model.pth"
+        token = _optional_streamlit_secret("HF_TOKEN")
+        return load_model_from_hub(
+            repo,
+            filename=filename,
+            device=_INFER_DEVICE,
+            token=token or None,
+        )
+    raise FileNotFoundError(
+        "No model weights found. Either add weights/best_model.pth under the project root, "
+        "or set Streamlit secret HF_REPO to a Hugging Face model repo that contains the file "
+        "(optional: HF_MODEL_FILE, HF_TOKEN for private repos)."
+    )
 
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
@@ -517,9 +553,20 @@ if uploaded_file is not None:
 
     img_tensor = preprocess_image(img_np)
 
-    with st.spinner("Running Monte Carlo inference…"):
-        model = _get_model()
-        result = mc_predict_with_dud(model, img_tensor, n_passes=mc_passes)
+    try:
+        with st.spinner("Running Monte Carlo inference…"):
+            model = _get_model()
+            result = mc_predict_with_dud(model, img_tensor, n_passes=mc_passes, device=_INFER_DEVICE)
+    except FileNotFoundError as e:
+        st.error(
+            f"**Model weights missing.** {e}\n\n"
+            "Locally: add `weights/best_model.pth`. "
+            "On Streamlit Cloud: set Secrets `HF_REPO` and upload the file to that Hugging Face repo."
+        )
+        st.stop()
+    except Exception as e:
+        st.error(f"Inference failed: {e}")
+        st.stop()
 
     st.session_state.result = result
 
@@ -661,7 +708,9 @@ if uploaded_file is not None:
     if show_cam:
         if st.session_state.cam_maps is None:
             with st.spinner("Computing UM-GradCAM…"):
-                cam_maps = compute_um_gradcam(model, img_tensor, grade, n_passes=10)
+                cam_maps = compute_um_gradcam(
+                    model, img_tensor, grade, n_passes=10, device=_INFER_DEVICE
+                )
             st.session_state.cam_maps = cam_maps
         else:
             cam_maps = st.session_state.cam_maps
@@ -712,7 +761,9 @@ if uploaded_file is not None:
             m = st.session_state.cam_maps
             if m is None:
                 with st.spinner("Computing UM-GradCAM…"):
-                    m = compute_um_gradcam(model, img_tensor, grade, n_passes=10)
+                    m = compute_um_gradcam(
+                        model, img_tensor, grade, n_passes=10, device=_INFER_DEVICE
+                    )
                 st.session_state.cam_maps = m
 
             img_display = cv2.resize(img_np, (380, 380), interpolation=cv2.INTER_AREA)

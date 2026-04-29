@@ -3,6 +3,7 @@ venv/
 venv310/
 env/
 .env
+.streamlit/secrets.toml
 
 # PyTorch Model Weights
 *.pth
